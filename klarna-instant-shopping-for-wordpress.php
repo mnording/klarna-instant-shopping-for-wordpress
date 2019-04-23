@@ -84,23 +84,6 @@ if ( ! class_exists( 'KISWP' ) ) {
 			$this->api_requests       = new KISWP_Api_Requests();
 			$this->api_callbacks      = new KISWP_Api_Callbacks();
 			$this->logger             = new KISWP_Logging();
-			// $this->update_order     = new PaysonCheckout_For_WooCommerce_Update_Order();
-			// $this->update_reference = new PaysonCheckout_For_WooCommerce_Update_Reference();
-			// $this->get_order        = new PaysonCheckout_For_WooCommerce_Get_Order();
-			// $this->cancel_order     = new PaysonCheckout_For_WooCommerce_Cancel_Order();
-			// $this->activate_order   = new PaysonCheckout_For_WooCommerce_Activate_Order();
-			// $this->refund_order     = new PaysonCheckout_For_WooCommerce_Refund_Order();
-			// $this->get_account      = '';
-			// Request Helpers.
-			// $this->cart_items    = new PaysonCheckout_For_WooCommerce_Helper_Cart();
-			// $this->merchant_urls = new PaysonCheckout_For_WooCommerce_Helper_Merchant();
-			// $this->customer      = new PaysonCheckout_For_WooCommerce_Helper_Customer();
-			// $this->gui           = new PaysonCheckout_For_WooCommerce_Helper_GUI();
-			// Classes.
-			// $this->session          = new PaysonCheckout_For_WooCommerce_Sessions();
-			// $this->order_management = new PaysonCheckout_For_WooCommerce_Order_Management();
-			// $this->backup_order     = new PaysonCheckout_For_WooCommerce_Backup_Order();
-			// do_action( 'payson_initiated' );
 		}
 		/**
 		 * Includes the files for the plugin
@@ -155,16 +138,6 @@ if ( ! class_exists( 'KISWP' ) ) {
 					$params
 				);
 				wp_enqueue_script( 'kiswp' );
-				/*
-				wp_register_style(
-					'pco',
-					PAYSONCHECKOUT_URL . '/assets/css/pco_style.css',
-					array(),
-					PAYSONCHECKOUT_VERSION
-				);
-				wp_enqueue_style( 'pco' );
-				*/
-				// wp_enqueue_script( 'klarna-instant-shopping', 'https://x.klarnacdn.net/instantshopping/lib/v1/lib.js' );
 			}
 		}
 	}

@@ -59,51 +59,10 @@ class KISWP_Options_Page {
 
 		add_settings_section(
 			'kiswp_pluginPage_section',
-			__( 'Your section description', 'klarna-instant-shopping-for-wordpress' ),
+			__( 'Klarna instant shopping settings', 'klarna-instant-shopping-for-wordpress' ),
 			array( $this, 'kiswp_settings_section_callback' ),
 			'pluginPage'
 		);
-
-		add_settings_field(
-			'test_id',
-			__( 'Test Username (UID)', 'klarna-instant-shopping-for-wordpress' ),
-			array( $this, 'field_test_id_render' ),
-			'pluginPage',
-			'kiswp_pluginPage_section'
-		);
-
-		add_settings_field(
-			'test_secret',
-			__( 'Test Password', 'klarna-instant-shopping-for-wordpress' ),
-			array( $this, 'field_test_secret_render' ),
-			'pluginPage',
-			'kiswp_pluginPage_section'
-		);
-
-		add_settings_field(
-			'live_id',
-			__( 'Production Username (UID)', 'klarna-instant-shopping-for-wordpress' ),
-			array( $this, 'field_live_id_render' ),
-			'pluginPage',
-			'kiswp_pluginPage_section'
-		);
-
-		add_settings_field(
-			'live_secret',
-			__( 'Production Password', 'klarna-instant-shopping-for-wordpress' ),
-			array( $this, 'field_live_secret_render' ),
-			'pluginPage',
-			'kiswp_pluginPage_section'
-		);
-
-		add_settings_field(
-			'testmode',
-			__( 'Test mode', 'klarna-instant-shopping-for-wordpress' ),
-			array( $this, 'field_testmode_render' ),
-			'pluginPage',
-			'kiswp_pluginPage_section'
-		);
-
 		add_settings_field(
 			'logging',
 			__( 'Debug logging', 'klarna-instant-shopping-for-wordpress' ),
@@ -111,6 +70,50 @@ class KISWP_Options_Page {
 			'pluginPage',
 			'kiswp_pluginPage_section'
 		);
+
+		// Load plugin options page if KCO or KP plugin isn't installed.
+		if ( ! class_exists( 'Klarna_Checkout_For_WooCommerce' ) && ! class_exists( 'WC_Klarna_Payments' ) ) {
+			add_settings_field(
+				'test_id',
+				__( 'Test Username (UID)', 'klarna-instant-shopping-for-wordpress' ),
+				array( $this, 'field_test_id_render' ),
+				'pluginPage',
+				'kiswp_pluginPage_section'
+			);
+
+			add_settings_field(
+				'test_secret',
+				__( 'Test Password', 'klarna-instant-shopping-for-wordpress' ),
+				array( $this, 'field_test_secret_render' ),
+				'pluginPage',
+				'kiswp_pluginPage_section'
+			);
+
+			add_settings_field(
+				'live_id',
+				__( 'Production Username (UID)', 'klarna-instant-shopping-for-wordpress' ),
+				array( $this, 'field_live_id_render' ),
+				'pluginPage',
+				'kiswp_pluginPage_section'
+			);
+
+			add_settings_field(
+				'live_secret',
+				__( 'Production Password', 'klarna-instant-shopping-for-wordpress' ),
+				array( $this, 'field_live_secret_render' ),
+				'pluginPage',
+				'kiswp_pluginPage_section'
+			);
+
+			add_settings_field(
+				'testmode',
+				__( 'Test mode', 'klarna-instant-shopping-for-wordpress' ),
+				array( $this, 'field_testmode_render' ),
+				'pluginPage',
+				'kiswp_pluginPage_section'
+			);
+
+		}
 
 	}
 
@@ -177,8 +180,7 @@ class KISWP_Options_Page {
 
 	public function kiswp_settings_section_callback() {
 
-		echo __( 'This section description', 'klarna-instant-shopping-for-wordpress' );
-
+		// echo __( 'This section description', 'klarna-instant-shopping-for-wordpress' );
 	}
 
 	/**
@@ -188,54 +190,43 @@ class KISWP_Options_Page {
 		?>
 		<div class="kiswp-wrap wrap">
 			<div class="kiswp-heading">
-				<h1><?php esc_html_e( 'Klarna Instant Shopping', 'klarna-checkout-for-woocommerce' ); ?></h1>	
+				<h1><?php esc_html_e( 'Klarna Instant Shopping', 'klarna-checkout-for-woocommerce' ); ?></h1>
+				<?php echo '<p>' . __( '<i>All credentials will be fetched from your main Klarna plugin.</i>', 'klarna-checkout-for-woocommerce' ) . '</p>'; ?>
 			</div>
 			<div class="kiswp-body">
-			<?php
-			// Load plugin options page if KCO or KP plugin isn't installed.
-			if ( ! class_exists( 'Klarna_Checkout_For_WooCommerce' ) && ! class_exists( 'WC_Klarna_Payments' ) ) {
-				?>
-				<form action='admin.php' method='post'>
+			
+				<form action="options.php" method='post'>
 					<?php
 					$environment = ( 'yes' === KISWP()->settings->get_testmode() ) ? 'playground' : 'production';
-					print_r( $environment );
+					echo 'Current selected environment: ' . $environment;
 					settings_fields( 'pluginPage' );
 					do_settings_sections( 'pluginPage' );
 					submit_button();
 					?>
 				</form>
-				<?php
-			} else {
-				echo '<p>' . __( 'All credentials will be fetched from your main Klarna plugin.', 'klarna-checkout-for-woocommerce' ) . '</p>';
-			}
-			/*
-			echo '<pre>';
-			print_r( get_current_screen() );
-			echo '</pre>';
-			*/
-			?>
-			<form action="<?php echo admin_url( 'admin.php?page=klarna-instant-shopping&newbutton' ); ?>" method="post">
-				<?php
-				if ( isset( $_POST['newbutton'] ) ) {
-					$response = KISWP()->api_requests->generate_button_key();
-					if ( is_wp_error( $response ) ) {
-						echo '<pre>';
-						print_r( $response );
-						echo '</pre>';
-					} else {
-						$response_body = json_decode( $response['body'] );
-					}
-
-					update_option( 'kiswp_buttonid', $response_body->button_key );
-				}
-				?>
-				<button name="newbutton">Create new button</button>
 				
-			</form>
-			<?php
+				<form action="<?php echo admin_url( 'admin.php?page=klarna-instant-shopping&newbutton' ); ?>" method="post">
+					<?php
+					if ( isset( $_POST['newbutton'] ) ) {
+						$response = KISWP()->api_requests->generate_button_key();
+						if ( is_wp_error( $response ) ) {
+							echo '<pre>';
+							print_r( $response );
+							echo '</pre>';
+						} else {
+							$response_body = json_decode( $response['body'] );
+						}
 
-			echo '<p>Button: ' . get_option( 'kiswp_buttonid' ) . '</p>';
-			?>
+						update_option( 'kiswp_buttonid', $response_body->button_key );
+					}
+					?>
+					<button name="newbutton">Create new button</button>
+					
+				</form>
+				<?php
+
+				echo '<p>Button: ' . get_option( 'kiswp_buttonid' ) . '</p>';
+				?>
 				
 			</div>
 		</div>

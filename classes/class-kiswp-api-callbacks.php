@@ -56,19 +56,6 @@ class KISWP_Api_Callbacks {
 	}
 
 	public function GetOrderDetailsFromKlarna( $authToken ) {
-		/*
-		$client = new GuzzleHttp\Client();
-
-		$res = $client->get(
-			$this->baseUrl . '/instantshopping/v1/authorizations/' . $authToken,
-			[
-				'auth'    => [ $this->username, $this->pass ],
-				'headers' => [
-					'User-Agent' => 'Mnording Instant Shopping WP-Plugin',
-				],
-			]
-		);
-		*/
 
 		$request_url  = KISWP()->api_requests->get_api_url_base() . 'instantshopping/v1/authorizations/' . $authToken;
 		$request_args = array(
@@ -90,22 +77,7 @@ class KISWP_Api_Callbacks {
 	- other for which you may specify a deny_message which will be shown to the consumer. It is important that the language of the message matches the locale of the Instant Shopping flow
 	*/
 	public function DenyOrder( $auth, $code, $message ) {
-		/*
-		$client = new GuzzleHttp\Client();
-		$res    = $client->delete(
-			$this->baseUrl . '/instantshopping/v1/authorizations/' . $auth,
-			[
-				'json'    => [
-					'deny_code'    => $code,
-					'deny_message' => $message,
-				],
-				'headers' => [
-					'User-Agent' => 'Mnording Instant Shopping WP-Plugin',
-				],
-				'auth'    => [ $this->username, $this->pass ],
-			]
-		);
-		*/
+
 		$request_url  = KISWP()->api_requests->get_api_url_base() . 'instantshopping/v1/authorizations/' . $auth;
 		$request_args = array(
 			'headers'    => KISWP()->api_requests->get_request_headers(),
@@ -124,7 +96,6 @@ class KISWP_Api_Callbacks {
 	}
 
 	public function PlaceOrder( $auth, $order, $wcorder ) {
-		// $client = new GuzzleHttp\Client();
 		$wcorderUrl                         = $wcorder->get_checkout_order_received_url();
 		$order->merchant_urls->confirmation = $wcorderUrl;
 		$request_url                        = KISWP()->api_requests->get_api_url_base() . 'instantshopping/v1/authorizations/' . $auth . '/orders/';
@@ -136,19 +107,6 @@ class KISWP_Api_Callbacks {
 		);
 		$response                           = wp_safe_remote_post( $request_url, $request_args );
 
-		/*
-		$res = $client->post(
-			$this->baseUrl . '/instantshopping/v1/authorizations/' . $auth . '/orders/',
-			[
-				'json'    => $order,
-				'headers' => [
-					'User-Agent' => 'Mnording Instant Shopping WP-Plugin',
-				],
-				'auth'    => [ $this->username, $this->pass ],
-			]
-		);
-		$order = json_decode( $res->getBody() );
-		*/
 		$order = json_decode( $response['body'] );
 		return $order->order_id;
 	}
